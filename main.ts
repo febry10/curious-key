@@ -40,7 +40,10 @@ function validate(text: string): void {
 
 function main(): void {
   validate(TEXT);
-  const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
+  // An empty MAKEFUN_OUTPUT_DIR is the same as unset: mkdirSync("") would
+  // throw, and the grader must never fail on an empty variable.
+  const rawOut = process.env.MAKEFUN_OUTPUT_DIR;
+  const outDir = rawOut !== undefined && rawOut.trim() !== "" ? rawOut : "/output";
   mkdirSync(outDir, { recursive: true });
   const outPath = join(outDir, "entry.txt");
   writeFileSync(outPath, TEXT, "utf8");
